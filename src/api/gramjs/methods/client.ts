@@ -128,7 +128,7 @@ export async function init(initialArgs: ApiInitialArgs) {
         firstAndLastNames: onRequestRegistration,
         qrCode: onRequestQrCode,
         onError: onAuthError,
-        initialMethod: platform === 'iOS' || platform === 'Android' ? 'phoneNumber' : 'qrCode',
+        initialMethod: 'phoneNumber',
         shouldThrowIfUnauthorized: Boolean(sessionData),
         webAuthToken,
         webAuthTokenFailed: onWebAuthTokenFailed,
