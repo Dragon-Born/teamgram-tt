@@ -5,7 +5,7 @@ import {
   UPLOADING_WALLPAPER_SLUG,
 } from '../../../types';
 
-import { APP_CONFIG_REFETCH_INTERVAL, COUNTRIES_WITH_12H_TIME_FORMAT, MAX_INT_32 } from '../../../config';
+import { APP_CONFIG_REFETCH_INTERVAL, COUNTRIES_WITH_12H_TIME_FORMAT, DEBUG, MAX_INT_32 } from '../../../config';
 import { getCurrentTabId } from '../../../util/establishMultitabRole';
 import { buildCollectionByKey } from '../../../util/iteratees';
 import { requestPermission, subscribe, unsubscribe } from '../../../util/notifications';
@@ -585,7 +585,17 @@ addActionHandler('loadCountryList', async (global, actions, payload): Promise<vo
   let { langCode } = payload;
   if (!langCode) langCode = global.settings.byKey.language;
 
-  let countryList = await callApi('fetchCountryList', { langCode });
+  let countryList;
+  try {
+    countryList = await callApi('fetchCountryList', { langCode });
+  } catch (err) {
+    // Server may not support help.GetCountriesList
+    if (DEBUG) {
+      // eslint-disable-next-line no-console
+      console.warn('Failed to fetch country list from server, using fallback', err);
+    }
+  }
+
   if (!countryList) {
     const { default: getFallbackCountryList } = await import('../../../util/data/fallbackCountryList');
     countryList = getFallbackCountryList();
