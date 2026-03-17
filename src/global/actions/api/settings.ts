@@ -585,8 +585,11 @@ addActionHandler('loadCountryList', async (global, actions, payload): Promise<vo
   let { langCode } = payload;
   if (!langCode) langCode = global.settings.byKey.language;
 
-  const countryList = await callApi('fetchCountryList', { langCode });
-  if (!countryList) return;
+  let countryList = await callApi('fetchCountryList', { langCode });
+  if (!countryList) {
+    const { default: getFallbackCountryList } = await import('../../../util/data/fallbackCountryList');
+    countryList = getFallbackCountryList();
+  }
 
   global = getGlobal();
   global = {
