@@ -1228,7 +1228,18 @@ class TelegramClient {
 
     async loadConfig() {
         if (!this._config) {
-            this._config = await this.invoke(new Api.help.GetConfig());
+            try {
+                const timeout = new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), 5000));
+                const config = await Promise.race([
+                    this.invoke(new Api.help.GetConfig()),
+                    timeout,
+                ]);
+                if (config) {
+                    this._config = config;
+                }
+            } catch (err) {
+                // Server may not support help.GetConfig, continue without it
+            }
         }
     }
 
@@ -1237,6 +1248,7 @@ class TelegramClient {
             await this.connect();
         }
 
+        // Don't block startup on config - it's only used for webfileDcId with a fallback
         this.loadConfig();
 
         if (await checkAuthorization(this, authParams.shouldThrowIfUnauthorized)) {

@@ -67,7 +67,13 @@ export function signInUserWithPreferredMethod(
 
 export async function checkAuthorization(client: TelegramClient, shouldThrow = false) {
     try {
-        await client.invoke(new Api.updates.GetState());
+        const timeout = new Promise<never>((_, reject) => setTimeout(
+            () => reject(new Error('Authorization check timed out')), 10000,
+        ));
+        await Promise.race([
+            client.invoke(new Api.updates.GetState()),
+            timeout,
+        ]);
         return true;
     } catch (err: unknown) {
         if ((err instanceof Error && err.message === 'Disconnect') || shouldThrow) throw err;
