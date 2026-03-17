@@ -55,7 +55,8 @@ export default class HttpStream {
     }
 
     static getURL(ip: string, port: number, isTestServer?: boolean, isPremium?: boolean) {
-        if (port === 443) {
+        const useSecure = port === 443 || (typeof self !== 'undefined' && self.location?.protocol === 'https:');
+        if (useSecure) {
             return `https://${ip}:${port}/apiw1${isTestServer ? '_test' : ''}${isPremium ? '_premium' : ''}`;
         } else {
             return `http://${ip}:${port}/apiw1${isTestServer ? '_test' : ''}${isPremium ? '_premium' : ''}`;

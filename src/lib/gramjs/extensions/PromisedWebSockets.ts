@@ -77,7 +77,8 @@ export default class PromisedWebSockets {
     }
 
     getWebSocketLink(ip: string, port: number, isTestServer?: boolean, isPremium?: boolean) {
-        if (port === 443) {
+        const useSecure = port === 443 || (typeof self !== 'undefined' && self.location?.protocol === 'https:');
+        if (useSecure) {
             return `wss://${ip}:${port}/apiws${isTestServer ? '_test' : ''}${isPremium ? '_premium' : ''}`;
         } else {
             return `ws://${ip}:${port}/apiws${isTestServer ? '_test' : ''}${isPremium ? '_premium' : ''}`;
