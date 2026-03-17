@@ -205,7 +205,7 @@ export function getDC(dcId: number, downloadDC = false) {
             return {
                 id: 1,
                 ipAddress: '185.232.152.112',
-                port: 11443,
+                port: 443,
             };
         default:
             throw new Error(`Cannot find the DC with the ID of ${dcId}`);
