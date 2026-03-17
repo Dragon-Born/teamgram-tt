@@ -587,13 +587,12 @@ addActionHandler('loadCountryList', async (global, actions, payload): Promise<vo
 
   let countryList;
   try {
-    countryList = await callApi('fetchCountryList', { langCode });
+    const serverList = await callApi('fetchCountryList', { langCode });
+    if (serverList && serverList.phoneCodes.length > 0) {
+      countryList = serverList;
+    }
   } catch (err) {
     // Server may not support help.GetCountriesList
-    if (DEBUG) {
-      // eslint-disable-next-line no-console
-      console.warn('Failed to fetch country list from server, using fallback', err);
-    }
   }
 
   if (!countryList) {
