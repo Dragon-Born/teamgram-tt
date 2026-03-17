@@ -581,24 +581,9 @@ addActionHandler('updateContentSettings', async (global, actions, payload): Prom
   }
 });
 
-addActionHandler('loadCountryList', async (global, actions, payload): Promise<void> => {
-  let { langCode } = payload;
-  if (!langCode) langCode = global.settings.byKey.language;
-
-  let countryList;
-  try {
-    const serverList = await callApi('fetchCountryList', { langCode });
-    if (serverList && serverList.phoneCodes.length > 0) {
-      countryList = serverList;
-    }
-  } catch (err) {
-    // Server may not support help.GetCountriesList
-  }
-
-  if (!countryList) {
-    const { default: getFallbackCountryList } = await import('../../../util/data/fallbackCountryList');
-    countryList = getFallbackCountryList();
-  }
+addActionHandler('loadCountryList', async (global): Promise<void> => {
+  const { default: getFallbackCountryList } = await import('../../../util/data/fallbackCountryList');
+  const countryList = getFallbackCountryList();
 
   global = getGlobal();
   global = {
